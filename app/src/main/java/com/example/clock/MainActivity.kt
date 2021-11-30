@@ -45,6 +45,15 @@ class MainActivity : AppCompatActivity() {
 //        val installIntent = Intent()
 //        installIntent.action = TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA
 //        startActivity(installIntent)
+
+        test()
+    }
+
+    private fun test() {
+        am?.talk(7, 45, 0)
+        am?.talk(7, 55, 0)
+        am?.talk(12, 0, 0)
+        am?.talk(12, 0, 0)
     }
 
     fun setTime() {
