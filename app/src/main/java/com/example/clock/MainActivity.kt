@@ -46,14 +46,18 @@ class MainActivity : AppCompatActivity() {
 //        installIntent.action = TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA
 //        startActivity(installIntent)
 
-        test()
+//        val testRunnable = Runnable { test() }
+//        handler.postDelayed(testRunnable, 2000)
     }
 
     private fun test() {
-        am?.talk(7, 45, 0)
-        am?.talk(7, 55, 0)
-        am?.talk(12, 0, 0)
-        am?.talk(12, 0, 0)
+//        am?.talk(7, 45, 1)
+//        am?.talk(7, 40, 1)
+//        am?.talk(7, 55, 0)
+//        am?.talk(12, 0, 0)
+//        am?.talk(13, 0, 0)
+        am?.talk(7, 40, 0)
+        am?.talk(19, 0, 1)
     }
 
     fun setTime() {
@@ -79,7 +83,19 @@ class MainActivity : AppCompatActivity() {
         sb.append(sec)
 
         tv!!.text = sb
-        am?.talk(hour, min, sec)
+
+        // talking part
+        if (sec != 0) {
+            return
+        }
+
+        var weekDay = cal.get(Calendar.DAY_OF_WEEK)
+        weekDay = if (weekDay in (2..6)) {
+            1
+        } else {
+            0
+        }
+        am?.talk(hour, min, weekDay)
     }
 
 }

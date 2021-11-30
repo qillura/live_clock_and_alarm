@@ -19,42 +19,41 @@ class AlarmManager(context: Context) {
             context
         ) { speech?.language = Locale.CHINESE; }
 
-        alarms[getTime(7, 15)] = "麦麦吃早饭啦。"
-        alarms[getTime(7, 30)] = "麦麦记得吃药哦。"
-        alarms[getTime(7, 40)] = "麦麦要出门了。"
+        alarms[getTime(7, 15, 1)] = "麦麦吃早饭啦。"
+        alarms[getTime(7, 30, 1)] = "麦麦记得吃药哦。"
+        alarms[getTime(7, 40, 1)] = "麦麦要出门了。"
 
-        alarms[getTime(19, 0)] = "麦麦去上厕所吧。"
-        alarms[getTime(19, 15)] = "麦麦要刷牙咯。"
-        alarms[getTime(19, 45)] = "上床聊天吧！"
-        alarms[getTime(20, 0)] = "麦麦睡觉时间啦！"
+        for (weekday in 0..1) {
+            alarms[getTime(19, 0, weekday)] = "麦麦去上厕所吧。"
+            alarms[getTime(19, 15, weekday)] = "麦麦要刷牙咯。"
+            alarms[getTime(19, 45, weekday)] = "上床聊天吧！"
+            alarms[getTime(20, 0, weekday)] = "麦麦睡觉时间啦！"
 
-        alarms[getTime(12, 0)] = "要不要吃个午饭？"
-        alarms[getTime(18, 0)] = "准备吃香喷喷的晚饭了！好耶！"
+            alarms[getTime(12, 0, weekday)] = "要不要吃个午饭？"
+            alarms[getTime(18, 0, weekday)] = "准备吃香喷喷的晚饭了！好耶！"
+        }
     }
 
-    fun talk(hour: Int, min: Int, sec: Int) {
+    fun talk(hour: Int, min: Int, weekday: Int) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             return
         }
-        if (sec != 0) {
-            return
-        }
 
-        val tt: String? = getString(hour, min)
+        val tt: String? = getString(hour, min, weekday)
         if (tt != null) {
             for (i in 1..2) {
                 speech?.speak(
                     tt,
                     QUEUE_ADD,
                     null,
-                    "1"
+                    tt
                 )
             }
         }
     }
 
-    private fun getString(hour: Int, min: Int): String? {
-        if (!shouldTalk(hour, min)) {
+    private fun getString(hour: Int, min: Int, weekday: Int): String? {
+        if (!shouldTalk(hour, min, weekday)) {
             return null
         }
         val tt: StringBuilder = StringBuilder("现在时间：")
@@ -76,16 +75,16 @@ class AlarmManager(context: Context) {
         }
         tt.append("    ")
 
-        if (alarms.containsKey(getTime(hour, min))) {
-            tt.append(alarms[getTime(hour, min)])
+        if (alarms.containsKey(getTime(hour, min, weekday))) {
+            tt.append(alarms[getTime(hour, min, weekday)])
             tt.append("    ")
         }
 
         return tt.toString();
     }
 
-    private fun shouldTalk(hour: Int, min: Int): Boolean {
-        if (alarms.containsKey(getTime(hour, min))) {
+    private fun shouldTalk(hour: Int, min: Int, weekday: Int): Boolean {
+        if (alarms.containsKey(getTime(hour, min, weekday))) {
             return true;
         }
         if ((min == 0 || min == 15 || min == 30 || min == 45)
@@ -97,7 +96,7 @@ class AlarmManager(context: Context) {
     }
 
 
-    private fun getTime(hour: Int, min: Int): Int {
-        return min + hour * 60
+    private fun getTime(hour: Int, min: Int, weekday: Int): Int {
+        return min + hour * 60 + weekday * 10000
     }
 }
